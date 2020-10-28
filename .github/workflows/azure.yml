@@ -20,11 +20,10 @@ jobs:
       with:
         node-version: '12.18.3'
 
-    - name: npm install, build, and test
+    - name: npm install, start, and test
       run: |
         npm install
-        npm publish --access public
-        npm run test --if-present
+        npm start
 
     - name: 'Deploy to Azure Web App'
       uses: azure/webapps-deploy@v2
