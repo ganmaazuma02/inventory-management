@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/dd416104-2ede-4584-88a9-f4dbe26c112e/resourceGroups/inventory-management-node/providers/Microsoft.Web/sites/inventory-management",
+    "appService.deploySubpath": "."
+}

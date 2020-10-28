@@ -4,7 +4,8 @@ const dotenv = require('dotenv')
 const connectDB = require('./config/db')
 const morgan = require('morgan')
 const exphbs = require('express-handlebars')
-const { v4: uuidv4 } = require('uuid')
+const helmet = require('helmet')
+const compression = require('compression')
 const items = require('./routes/api/items')
 
 // Load config
@@ -14,6 +15,8 @@ connectDB()
 
 const app = express()
 app.use(express.json());
+app.use(helmet())
+app.use(compression())
 
 if(process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
