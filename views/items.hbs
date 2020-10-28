@@ -40,6 +40,24 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
+                        <form method="post" action="" enctype="multipart/form-data" id="myform">
+                            <div class='preview'>
+                                <img src="" id="itemImagePreview" width="300" height="300">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Item Image</label>
+                                        <input type="file" id="file" name="file" class="form-control-file" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-center mt-4">
+                                        <input type="button" class="btn btn-success" value="Upload" id="btnUploadImage">
+                                    </div>
+                                </div>                          
+                            </div>
+                        </form>
                         <form>
                             <div class="text-danger"></div>
                             <input type="hidden" id="itemId" />

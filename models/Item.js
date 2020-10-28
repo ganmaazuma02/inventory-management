@@ -17,6 +17,10 @@ const ItemSchema = new mongoose.Schema({
     dateTimeAdded: {
         type: Date,
         required: true
+    },
+    imageUrl: {
+        type: String,
+        required: false
     }
 })
 

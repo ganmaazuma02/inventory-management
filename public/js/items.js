@@ -1,3 +1,5 @@
+let itemSaved = false;
+let imageUploaded = false;
 let rowData = [];
 let gridOptions = {
     columnDefs: [
@@ -13,9 +15,20 @@ let gridOptions = {
                     $('#addItemModal').find('.modal-title').text('Edit Item');
                     $('#btnAddItem').text('Edit Item');
                     $('#itemId').val(params.data._id);
-                    $('#itemName').val(params.data.name);
-                    $('#itemDesc').val(params.data.description);
-                    $('#itemQuantity').val(params.data.quantity);
+
+                    $.ajax({
+                        url: '/api/items/' + params.data._id,
+                        type: 'GET',
+                        success: function(res) {
+                            $('#itemName').val(res.name);
+                            $('#itemDesc').val(res.description);
+                            $('#itemQuantity').val(res.quantity);
+                            $("#itemImagePreview").attr("src", res.imageUrl); 
+                            $("#itemImagePreview").show();
+                        }
+                    })
+                    
+                    
                 });
 
                 var delButton = actionDiv.querySelector('.btn-danger');
@@ -80,10 +93,61 @@ document.addEventListener('DOMContentLoaded', function () {
     new agGrid.Grid(gridDiv, gridOptions);
     gridOptions.api.paginationSetPageSize(10);
     loadItemData();
+});
 
+$("#btnUploadImage").on('click', function(){
+    var fd = new FormData();
+    var files = $('#file')[0].files;
+    
+    // Check file selected or not
+    if(files.length > 0 ){
+       fd.append('item',files[0]);
+
+       $.ajax({
+          url: '/api/items/image',
+          type: 'POST',
+          data: fd,
+          contentType: false,
+          processData: false,
+          success: function(response){
+             if(response != 0){
+                $("#itemImagePreview").attr("src",response); 
+                $(".preview img").show(); // Display image element
+                $('#file').val('');
+                imageUploaded = true;
+             }else{
+                alert('file not uploaded');
+             }
+          },
+       });
+    }else{
+       alert("Please select a file.");
+    }
 });
 
 $('#addItemModal').on('hidden.bs.modal', function (e) {
+    if(!itemSaved && imageUploaded) {
+        // delete the uploaded image
+        $.ajax({
+            url: '/api/items/image/delete?imageName=' + $('#itemImagePreview').attr('src'),
+            type: 'GET',
+            success: function(res) {
+                imageUploaded = false;
+                $("#itemImagePreview").attr("src", ''); 
+                $('#file').val('');
+                console.log('image deleted')
+            },
+            error: function (err) {
+                imageUploaded = false;
+                $("#itemImagePreview").attr("src", ''); 
+                $('#file').val('');
+                console.log('failed to delete image')
+            }
+        })
+    }
+    $("#itemImagePreview").attr("src", ''); 
+    $("#itemImagePreview").hide();
+    $('#file').val('');
     $('#itemName').val('');
     $('#itemDesc').val('');
     $('#itemQuantity').val('');
@@ -93,6 +157,7 @@ $('#addItemModal').on('hidden.bs.modal', function (e) {
 })
 
 $('#btnOpenAddItemModal').on('click', function () {
+    itemSaved = false;
     $('#itemNameErr').text('');
     $('#itemDescErr').text('');
     $('#itemQuantityErr').text('');
@@ -139,10 +204,12 @@ $('#btnAddItem').on('click', function () {
                 name: itemName,
                 description: itemDesc,
                 quantity: parseInt(itemQuantity),
+                imageUrl: $('#itemImagePreview').attr('src')
             }),
             type: 'POST',
             contentType: 'application/json',
             success: function (res) {
+                itemSaved = true;
                 loadItemData();
                 finishModal('Add Item', 'Successfully added an item', 'success');
             },
@@ -157,10 +224,12 @@ $('#btnAddItem').on('click', function () {
                 name: itemName,
                 description: itemDesc,
                 quantity: parseInt(itemQuantity),
+                imageUrl: $('#itemImagePreview').attr('src')
             }),
             type: 'PUT',
             contentType: 'application/json',
             success: function (res) {
+                itemSaved = true;
                 loadItemData();
                 finishModal('Edit Item', 'Successfully edited an item', 'success');
             },
