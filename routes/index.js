@@ -13,4 +13,10 @@ router.get('/items', (req, res) => {
     res.render('items')
 })
 
+// @desc Login page
+// @route GET /login
+router.get('/login', (req, res) => {
+    res.render('login')
+})
+
 module.exports = router
